@@ -1,5 +1,8 @@
 ﻿namespace SLCMC.Authentication
 {
+    /// <summary>
+    /// 验证器接口
+    /// </summary>
     public interface IAuthenticator
     {
         /// <summary>
