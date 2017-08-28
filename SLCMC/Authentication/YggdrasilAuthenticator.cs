@@ -28,6 +28,9 @@ namespace SLCMC.Authentication
 
         public YggdrasilInfo data;
 
+        public Guid AccessToken { get { return data.AccessToken; } }
+        public Guid ClientToken { get { return data.ClientToken; } }
+
         /// <summary>
         /// 使用用户名和密码登录到Yggdrasil服务器
         /// </summary>
@@ -81,8 +84,8 @@ namespace SLCMC.Authentication
                 return YggdrasilError.Exception(e);
             }
         }
-        /*
-        public string Refresh(Guid accessToken, Guid clientToken, bool? requestUser = null)
+
+        public YggdrasilError Refresh(Guid accessToken, Guid clientToken, bool? requestUser = null)
         {
             JObject jsonData = new JObject();
 
@@ -90,9 +93,40 @@ namespace SLCMC.Authentication
             jsonData["clientToken"] = clientToken.ToString("N");
             if (requestUser.HasValue) jsonData["requestUser"] = requestUser.Value;
 
-            return jsonData.ToString();
+            byte[] jsonByteArray = Encoding.UTF8.GetBytes(jsonData.ToString());
+
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Url + "/refresh");
+
+                request.Method = "POST";
+                request.Timeout = 12000;
+                request.ContentType = "application/json";
+                request.ContentLength = jsonByteArray.Length;
+
+                Stream stream = request.GetRequestStream();
+                stream.Write(jsonByteArray, 0, jsonByteArray.Length);
+                stream.Close();
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+
+                if (Convert.ToInt32(response.StatusCode) == 200)
+                {
+                    data = YggdrasilInfo.Parse(JObject.Parse(reader.ReadToEnd()));
+                    return YggdrasilError.Null();
+                }
+                else
+                {
+                    return YggdrasilError.RequestError(JObject.Parse(reader.ReadToEnd()));
+                }
+            }
+            catch (Exception e)
+            {
+                return YggdrasilError.Exception(e);
+            }
         }
-        */
+
 
         //IAuthenticator接口
         #region

@@ -84,6 +84,31 @@ namespace test
                     Console.WriteLine("Type:" + auth.Auth().Type);
                     break;
                 case '2':
+                    Console.WriteLine();
+                    Console.Write("Input Username:");
+                    a = Console.ReadLine();
+                    Console.Write("Input Password:");
+                    b = Console.ReadLine();
+                    auth.Authenticate(a, b, Guid.NewGuid(), true);
+
+                    Console.WriteLine("AuthenticateData:");
+
+                    Console.WriteLine("AccessToken:" + auth.AccessToken);
+                    Console.WriteLine("ClientToken:" + auth.ClientToken);
+                    Console.WriteLine("Name:" + auth.Auth().Name);
+                    Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+                    Console.WriteLine("Type:" + auth.Auth().Type);
+                    Console.WriteLine();
+
+                    auth.Refresh(auth.AccessToken, auth.ClientToken, true);
+
+                    Console.WriteLine("RefreshData:");
+                    Console.WriteLine("AccessToken:" + auth.AccessToken);
+                    Console.WriteLine("ClientToken:" + auth.ClientToken);
+                    Console.WriteLine("Name:" + auth.Auth().Name);
+                    Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+                    Console.WriteLine("Type:" + auth.Auth().Type);
+
                     break;
                 default:
                     return;
