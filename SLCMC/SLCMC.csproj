@@ -53,6 +53,11 @@
     <Compile Include="Authentication\IAuthenticator.cs" />
     <Compile Include="Authentication\OfflineAuthenticator.cs" />
     <Compile Include="Authentication\YggdrasilAuthenticator.cs" />
+    <Compile Include="GameFile\DownloadInfo.cs" />
+    <Compile Include="GameFile\Version\AssetIndexInfo.cs" />
+    <Compile Include="GameFile\Version\LibraryInfo.cs" />
+    <Compile Include="GameFile\Version\LoggingInfo.cs" />
+    <Compile Include="GameFile\Version\VersionData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

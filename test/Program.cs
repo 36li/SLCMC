@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using SLCMC.Authentication;
+using SLCMC.GameFile.Version;
 
 namespace test
 {
@@ -14,12 +17,17 @@ namespace test
             while (true)
             {
                 Console.WriteLine("1.Authentication");
+                Console.WriteLine("2.Version");
 
                 switch (Console.ReadKey().KeyChar)
                 {
                     case '1':
                         Console.WriteLine();
                         AuthenticationTest();
+                        break;
+                    case '2':
+                        Console.WriteLine();
+                        VersionTest();
                         break;
                     default:
                         return;
@@ -123,6 +131,21 @@ namespace test
                 default:
                     return;
             }
+        }
+
+        static void VersionTest()
+        {
+            Console.Write("Input Json File Path:");
+            string path = Console.ReadLine();
+
+            VersionData data = VersionData.Parse(JObject.Parse(File.ReadAllText(path)));
+
+            Console.WriteLine(data.Assets);
+            foreach(var data2 in data.Libraries)
+                Console.WriteLine(data2.Name);
+            Console.WriteLine(data.Id);
+            Console.WriteLine(data.InheritsFrom);
+            Console.WriteLine(data.Jar);
         }
     }
 }
