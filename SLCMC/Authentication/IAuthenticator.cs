@@ -6,9 +6,9 @@
     public interface IAuthenticator
     {
         /// <summary>
-        /// 获取玩家信息
+        /// 获取角色信息
         /// </summary>
-        /// <returns>玩家信息</returns>
+        /// <returns>角色信息</returns>
         AuthenticationInfo Auth();
 
         /// <summary>

@@ -11,39 +11,45 @@ namespace SLCMC.Authentication
     public class OfflineAuthenticator : IAuthenticator
     {
         /// <summary>
-        /// 构造函数
+        /// 角色信息
         /// </summary>
-        /// <param name="playerName">角色名，如果为null将使用player作为角色名</param>
-        /// <param name="playerId">角色的uuid，如果为null将使用角色名生成uuid</param>
-        public OfflineAuthenticator(string playerName = null, Guid? playerId = null)
+        public AuthenticationProfile profile;
+
+        /// <summary>
+        /// 使用角色名和uuid初始化离线验证器
+        /// </summary>
+        /// <param name="name">角色名</param>
+        /// <param name="id">角色的uuid，如果为null将自动生成一个</param>
+        public OfflineAuthenticator(string name, Guid? id = null)
         {
-            if (string.IsNullOrWhiteSpace(playerName)) PlayerName = "player";
-            else PlayerName = playerName;
-            if (playerId.HasValue) PlayerId = playerId.Value;
-            else
+            try
             {
-                MD5 md5 = new MD5CryptoServiceProvider();
-                PlayerId = new Guid(md5.ComputeHash(Encoding.GetEncoding("utf-8").GetBytes(PlayerName)));
+                SetProfile(name, id);
+            }
+            catch (AuthenticationException exception)
+            {
+                throw exception;
             }
         }
 
         /// <summary>
-        /// 角色名
+        /// 设置角色名和uuid
         /// </summary>
-        public string PlayerName { get; set; }
-
-        /// <summary>
-        /// 角色的uuid
-        /// </summary>
-        public Guid PlayerId { get; set; }
-
-        /// <summary>
-        /// 账号属性表
-        /// </summary>
-        public Dictionary<string, string> Properties { get; set; }
+        /// <param name="name">角色名</param>
+        /// <param name="id">角色的uuid，如果为null将自动生成一个</param>
+        public void SetProfile(string name, Guid? id = null)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new AuthenticationException("Invalid username");
+            if (id.HasValue) profile = new AuthenticationProfile(name, id.Value);
+            else
+            {
+                MD5 md5 = new MD5CryptoServiceProvider();
+                profile = new AuthenticationProfile(name,
+                                                    new Guid(md5.ComputeHash(Encoding.GetEncoding("utf-8").GetBytes(name))));
+            }
+        }
 
         //IAuthenticator接口
-        #region
 
         /// <summary>
         /// 获取角色信息
@@ -51,15 +57,13 @@ namespace SLCMC.Authentication
         /// <returns>角色信息</returns>
         public AuthenticationInfo Auth()
         {
-            return new AuthenticationInfo(PlayerName, PlayerId, Guid.NewGuid(), Properties, "legacy");
+            return new AuthenticationInfo(profile, Guid.NewGuid(), null, "legacy");
         }
 
         /// <summary>
         /// 验证器名称
         /// </summary>
         public string Type { get { return "offline"; } }
-
-        #endregion
 
     }
 }

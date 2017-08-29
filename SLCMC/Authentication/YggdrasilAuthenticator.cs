@@ -129,7 +129,6 @@ namespace SLCMC.Authentication
 
 
         //IAuthenticator接口
-        #region
 
         /// <summary>
         /// 获取玩家信息
@@ -137,7 +136,7 @@ namespace SLCMC.Authentication
         /// <returns>玩家信息</returns>
         public AuthenticationInfo Auth()
         {
-            return new AuthenticationInfo(data.SelectedProfile.name, data.SelectedProfile.id, 
+            return new AuthenticationInfo(new AuthenticationProfile(data.SelectedProfile.name, data.SelectedProfile.id), 
                                           data.AccessToken, data.User.Properties, "mojang");
         }
 
@@ -145,8 +144,6 @@ namespace SLCMC.Authentication
         /// 验证器名称
         /// </summary>
         public string Type { get { return "yggdrasil"; } }
-
-        #endregion
 
     }
 

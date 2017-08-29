@@ -49,12 +49,14 @@
   <ItemGroup>
     <Compile Include="Authentication\AuthenticationException.cs" />
     <Compile Include="Authentication\AuthenticationInfo.cs" />
+    <Compile Include="Authentication\AuthenticationProfile.cs" />
     <Compile Include="Authentication\IAuthenticator.cs" />
     <Compile Include="Authentication\OfflineAuthenticator.cs" />
     <Compile Include="Authentication\YggdrasilAuthenticator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Authentication\Yggdrasil\" />
     <Folder Include="Launch\" />
   </ItemGroup>
   <ItemGroup>

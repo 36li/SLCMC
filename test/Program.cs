@@ -54,9 +54,12 @@ namespace test
             Console.Write("Input Name:");
             OfflineAuthenticator auth = new OfflineAuthenticator(Console.ReadLine());
 
-            Console.WriteLine("Name:" + auth.Auth().Name);
-            Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+            Console.WriteLine("Name:" + auth.Auth().Profile.Name);
+            Console.WriteLine("Id:" + auth.Auth().Profile.Id.ToString("N"));
             Console.WriteLine("AccessToken:" + auth.Auth().AccessToken.ToString("N"));
+            Console.WriteLine("Properties:");
+            foreach(KeyValuePair<string, string> property in auth.Auth().Properties)
+                Console.WriteLine("    " + property.Key + ":" + property.Value);
             Console.WriteLine("Type:" + auth.Auth().Type);
         }
 
@@ -78,9 +81,12 @@ namespace test
                     b = Console.ReadLine();
                     auth.Authenticate(a, b, Guid.NewGuid(), true);
 
-                    Console.WriteLine("Name:" + auth.Auth().Name);
-                    Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+                    Console.WriteLine("Name:" + auth.Auth().Profile.Name);
+                    Console.WriteLine("Id:" + auth.Auth().Profile.Id.ToString("N"));
                     Console.WriteLine("AccessToken:" + auth.Auth().AccessToken.ToString("N"));
+                    Console.WriteLine("Properties:");
+                    foreach (KeyValuePair<string, string> property in auth.Auth().Properties)
+                        Console.WriteLine("    " + property.Key + ":" + property.Value);
                     Console.WriteLine("Type:" + auth.Auth().Type);
                     break;
                 case '2':
@@ -93,20 +99,24 @@ namespace test
 
                     Console.WriteLine("AuthenticateData:");
 
-                    Console.WriteLine("AccessToken:" + auth.AccessToken);
-                    Console.WriteLine("ClientToken:" + auth.ClientToken);
-                    Console.WriteLine("Name:" + auth.Auth().Name);
-                    Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+                    Console.WriteLine("Name:" + auth.Auth().Profile.Name);
+                    Console.WriteLine("Id:" + auth.Auth().Profile.Id.ToString("N"));
+                    Console.WriteLine("AccessToken:" + auth.Auth().AccessToken.ToString("N"));
+                    Console.WriteLine("Properties:");
+                    foreach (KeyValuePair<string, string> property in auth.Auth().Properties)
+                        Console.WriteLine("    " + property.Key + ":" + property.Value);
                     Console.WriteLine("Type:" + auth.Auth().Type);
                     Console.WriteLine();
 
                     auth.Refresh(auth.AccessToken, auth.ClientToken, true);
 
                     Console.WriteLine("RefreshData:");
-                    Console.WriteLine("AccessToken:" + auth.AccessToken);
-                    Console.WriteLine("ClientToken:" + auth.ClientToken);
-                    Console.WriteLine("Name:" + auth.Auth().Name);
-                    Console.WriteLine("Id:" + auth.Auth().Id.ToString("N"));
+                    Console.WriteLine("Name:" + auth.Auth().Profile.Name);
+                    Console.WriteLine("Id:" + auth.Auth().Profile.Id.ToString("N"));
+                    Console.WriteLine("AccessToken:" + auth.Auth().AccessToken.ToString("N"));
+                    Console.WriteLine("Properties:");
+                    foreach (KeyValuePair<string, string> property in auth.Auth().Properties)
+                        Console.WriteLine("    " + property.Key + ":" + property.Value);
                     Console.WriteLine("Type:" + auth.Auth().Type);
 
                     break;
