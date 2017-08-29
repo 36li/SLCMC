@@ -141,8 +141,11 @@ namespace test
             VersionData data = VersionData.Parse(JObject.Parse(File.ReadAllText(path)));
 
             Console.WriteLine(data.Assets);
-            foreach(var data2 in data.Libraries)
-                Console.WriteLine(data2.Name);
+            foreach (var data2 in data.Libraries)
+            {
+                    Console.WriteLine(data2.GetFileInfo().Url);
+            }
+                
             Console.WriteLine(data.Id);
             Console.WriteLine(data.InheritsFrom);
             Console.WriteLine(data.Jar);

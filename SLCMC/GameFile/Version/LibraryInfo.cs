@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace SLCMC.GameFile.Version
@@ -132,16 +129,70 @@ namespace SLCMC.GameFile.Version
             }
         }
 
-        public LibraryInfo(string name, Dictionary<string, string> natives, List<RuleInfo> rules)
+        public LibraryInfo(string name, Dictionary<string, string> natives, List<RuleInfo> rules, LibraryDownloadsInfo downloads)
         {
             Name = name;
             Natives = natives;
             Rules = rules;
+            Downloads = downloads;
         }
+
+        
 
         public string Name { get; }
         public Dictionary<string, string> Natives { get; }
         public List<RuleInfo> Rules { get; }
+        public LibraryDownloadsInfo Downloads { get; }
+
+        public string Path
+        {
+            get
+            {
+                string[] text = Name.Split(new string[] {":"}, 3, StringSplitOptions.RemoveEmptyEntries);
+                string native = null;
+                if (Natives.TryGetValue("windows", out native))
+                {
+                    if (Environment.Is64BitOperatingSystem)  native.Replace("${arch}", "64");
+                    else native.Replace("${arch}", "32");
+                    return text[0].Replace('.', '/') + "/" + text[1] + "/" + text[2] + "/" + text[1] + "-" + native + "-" +
+                           text[2] + ".jar";
+                }  
+                else return text[0].Replace('.', '/') + "/" + text[1] + "/" + text[2] + "/" + text[1] + "-" + text[2] + ".jar";
+            }
+        }
+
+        public LibraryFileInfo GetFileInfo()
+        {
+            
+            string native;
+            if (!IsAllow())
+                return new LibraryFileInfo();
+            if (Natives.TryGetValue("windows", out native))
+            {
+                if (Environment.Is64BitOperatingSystem) native.Replace("${arch}", "64");
+                else native.Replace("${arch}", "32");
+                LibraryFileInfo fileInfo;
+                if (Downloads.Classifiers.TryGetValue(native, out fileInfo))
+                    return fileInfo;
+                else
+                    return new LibraryFileInfo();
+            }
+            else
+                return Downloads.Artifact;
+        }
+
+        public bool IsAllow()
+        {
+            if (Rules.Count == 0)
+                return true;
+            bool allow = false;
+            foreach (RuleInfo rule in Rules)
+            {
+                if (string.IsNullOrWhiteSpace(rule.Os.Name) || rule.Os.Name.Equals("windows"))
+                    allow = rule.Action.Equals("allow");
+            }
+            return allow;
+        }
 
         public static LibraryInfo Parse(JObject json)
         {
@@ -150,6 +201,7 @@ namespace SLCMC.GameFile.Version
             string name = null;
             Dictionary<string, string> natives = new Dictionary<string, string>();
             List<RuleInfo> rules = new List<RuleInfo>();
+            LibraryDownloadsInfo downloads = new LibraryDownloadsInfo();
 
             if (json.TryGetValue("name", out temp) && temp.Type == JTokenType.String)
                 name = temp.ToString();
@@ -161,8 +213,10 @@ namespace SLCMC.GameFile.Version
                 foreach (JToken jsonTok in JArray.Parse(temp.ToString()))
                     if (jsonTok.Type == JTokenType.Object)
                         rules.Add(RuleInfo.Parse(JObject.Parse(jsonTok.ToString())));
+            if (json.TryGetValue("downloads", out temp) && temp.Type == JTokenType.Object)
+                downloads = LibraryDownloadsInfo.Parse(JObject.Parse(temp.ToString()));
 
-            return new LibraryInfo(name, natives, rules);
+            return new LibraryInfo(name, natives, rules, downloads);
         }
     }
 }
